@@ -1,54 +1,58 @@
 /* globals describe, beforeEach, it, expect, module, inject */
 
-'use strict';
+describe('Service: tableStorage', function () {
 
-describe('Service: localStorageService', function () {
+  'use strict';
 
-  var ls, table;
+  var storage;
 
   beforeEach( module('localStorageModule') );
 
-  beforeEach(inject(function (localStorageService) {
-    ls = localStorageService;
+  beforeEach(inject(function ( $storage ) {
+    storage = $storage;
   }));
 
-  it('should be supported', function() {
-    expect(ls.isSupported).toBe(true);
-  });
 
-  describe('test table life cicle', function () {
 
-    it('should prevent table creation without name', function() {
-      expect(function () {
-        ls.getTable();
-      }).toThrow();
+  describe('provider', function () {
 
-      expect(function () {
-        ls.getTable('');
-      }).toThrow();
-    });
+    it('should always return a new instance', function() {
+      var table1 = storage('table1');
+      var table2 = storage('table2');
 
-    it('should create a table named test', function() {
-      table = ls.getTable('test');
-      expect(table._workingTableName).toBe('test');
-
-      expect(function () {
-        ls.getTable('test2');
-      }).not.toThrow();
-
-      table = ls.release( table );
-      expect(table).toEqual({});
-
-      table = ls.getTable('test2');
-      expect(table._workingTableName).toBe('test2');
+      // internals
+      expect(table1.$$tableName).toBe('table1');
+      expect(table2.$$tableName).toBe('table2');
     });
 
   });
+
+
+
+  describe('consistency', function () {
+
+    it('API functions should be intact', function() {
+      var table = storage('table');
+
+      expect(table.addItem).not.toBe(undefined);
+      expect(table.setItem).not.toBe(undefined);
+      expect(table.getItem).not.toBe(undefined);
+      expect(table.removeItem).not.toBe(undefined);
+      expect(table.truncate).not.toBe(undefined);
+
+      expect(table.wtf).toBe(undefined);
+
+    });
+
+  });
+
+
 
   describe('test different value types', function () {
+    var table;
 
     beforeEach(function () {
-      table = ls.getTable('test');
+      table = storage('test');
     });
 
     it('should store primitives', function() {
@@ -75,11 +79,13 @@ describe('Service: localStorageService', function () {
     });
 
     it('should store objects', function() {
+      var table2 = storage('test2');
+
       table.setItem('emtyObject', {});
       expect(table.getItem('emtyObject')).toEqual({});
 
-      table.setItem('object', {1:1});
-      expect(table.getItem('object')).toEqual({1:1});
+      table2.setItem('object', {1:1});
+      expect(table2.getItem('object')).toEqual({1:1});
     });
 
     it('should store array', function() {
@@ -91,6 +97,8 @@ describe('Service: localStorageService', function () {
     });
 
   });
+
+
 
   describe('test persistent storage layer', function () {
     var datas = [
@@ -109,8 +117,8 @@ describe('Service: localStorageService', function () {
     it('should store values in the table called "persistent"', function () {
       localStorage.clear();
 
-      var persistent = ls.getTable('persistent'),
-          persistent2 = ls.getTable('persistent2');
+      var persistent = storage('persistent'),
+          persistent2 = storage('persistent2');
 
       for ( var i = 0, len = datas.length; i < len; i++ ) {
         persistent.setItem(i, datas[i]);

@@ -9,8 +9,8 @@ files = [
   JASMINE_ADAPTER,
   'components/angular/angular.js',
   'components/angular-mocks/angular-mocks.js',
-  'src/localstorageservice.js',
-  'src/test/localstorageservice.spec.js'
+  'src/storageprovider.js',
+  'test/storageprovider.spec.js'
 ];
 
 // list of files to exclude

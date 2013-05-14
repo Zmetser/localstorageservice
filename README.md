@@ -19,11 +19,12 @@ angular.module('yourModule', ['localStorageModule'])
 
   .controller('yourController', [
     '$scope',
-    'localStorageService', // inject service
-    function($scope, localStorageService) {
-      var table = localStorageService.getTable('tableName');
+    '$storage', // inject service
+    function($scope, $storage) {
+      var table = $storage('tableName');
+
       table.setItem('meaningOfLife', 42);
-      table.release();
+      table.getItem('meaningOfLife'); // 42
     }
   ]);
 ```
@@ -33,42 +34,6 @@ angular.module('yourModule', ['localStorageModule'])
 
 
 ### API
-
-- **isSupported**
-
-Check if localStorage is supported by browser
-
-```javascript
-// returns Boolean
-localStorageService.isSupported
-```
-
-- **getTable**
-
-Grab a table
-
-If the table is not exists, the service'll create it.
-
-```javascript
-// returns new tableInstance
-var table = localStorageService.getTable('tableName');
-```
-
-- **release**
-
-Delete the table instance
-
-Param can be a tableName{String} or a table{tableInstance}.
-
-```javascript
-// returns {}
-table = localStorageService.release(table)
-```
-
-
-#### Table API
-
-Once you have a tableInstance via ```getTable```, you can use the following methods to store, retrieve or delete your records.
 
 - **setItem**
 
@@ -122,7 +87,7 @@ table.truncate(itemID);
 #### Example
 
 ```javascript
-var table = localStorageService.getTable('tableName');
+var table = $storage('tableName');
 
 // Set items
 table.setItem('meaningOfLife', 42);
@@ -146,6 +111,11 @@ table = localStorageService.release(table);
 expect(table).toEqual({});
 ```
 
+#### Use with [underscore.js]
+
+You can grab the whole table set with the ```$$table``` internal.
+
+```$store('tableName').$$table```
 
 ---
 
@@ -190,3 +160,4 @@ Licensed under the MIT License
 [bower]: http://bower.io/  "A package manager for the web"
 [karma]: http://karma-runner.github.io/  "Spectacular Test Runner for JavaScript"
 [localStorage]: https://developer.mozilla.org/en-US/docs/DOM/Storage#localStorage
+[underscore.js]: http://underscorejs.org/

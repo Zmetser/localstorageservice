@@ -1,6 +1,6 @@
 {
   "name": "localStorageService",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "dependencies": {
     "angular": "~1.0.5"
   },

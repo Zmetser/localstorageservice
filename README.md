@@ -37,12 +37,14 @@ angular.module('yourModule', ['localStorageModule'])
 
 - **setItem**
 
-Adds a new item to the table
+Adds a new item to the table.
 
-Returns the passed data;
+Returns the passed data.
+
+If an itemID has not been set, the underlaying storage type'll be an array. Otherwise it's an object.
 
 ```
-table.setItem(itemID, data);
+table.setItem([itemID], data);
 ```
 
 - **addItem**
@@ -52,7 +54,7 @@ Alias for **setItem**
 
 - **getItem**
 
-Get item by name
+Get item by name or by index if its an array.
 
 Returns the item from storage or ```null``` if nothing found.
 
@@ -63,7 +65,7 @@ table.getItem(itemID);
 
 - **removeItem**
 
-Remove item by name
+Remove item by name or by index if its an array.
 
 Returns the removed item or ```null``` if no item found.
 
@@ -74,10 +76,10 @@ table.removeItem(itemID);
 
 - **truncate**
 
-Dispose all datas in the current table
+Dispose all datas from the current table.
 
 ```
-table.truncate(itemID);
+table.truncate();
 ```
 
 
@@ -87,6 +89,7 @@ table.truncate(itemID);
 #### Example
 
 ```javascript
+// Object storage
 var table = $storage('tableName');
 
 // Set items
@@ -105,17 +108,43 @@ expect(table.getItem('meaningOfLife')).toBe(null);
 
 table.removeItem('justMyBirthday');
 expect(table.getItem('justMyBirthday')).toBe(null);
+```
 
-// Release table
-table = localStorageService.release(table);
-expect(table).toEqual({});
+```javascript
+// Array storage
+var items = $storage('items');
+
+// To use the array storage, just don't set an itemName.
+items.setItem(100);
+items.setItem(200);
+items.setItem(300);
+
+expect(items.$$table).toEqual([100, 200, 300]);
+
+expect(items.getItem(0)).toEqual(100);
+expect(items.getItem(4)).toBe(null);
+
 ```
 
 #### Use with [underscore.js]
 
 You can grab the whole table set with the ```$$table``` internal.
 
-```$store('tableName').$$table```
+```javascript
+
+var users = $storage('users');
+
+// In this case users.$$table is an array.
+users.setItem({name: "John", email: "john@gmail.com"});
+users.setItem({name: "Peter", email: "peter@gmail.com"});
+users.setItem({name: "Oliver", email: "oliver@gmail.com"});
+
+...
+
+_.findWhere(users.$$table, {name: "Oliver"})
+// => {name: "Oliver", email: "oliver@gmail.com"}
+
+```
 
 ---
 

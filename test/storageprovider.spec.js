@@ -48,7 +48,7 @@ describe('Service: tableStorage', function () {
 
 
 
-  describe('test different value types', function () {
+  describe('test different value types in object storage mode', function () {
     var table;
 
     beforeEach(function () {
@@ -74,8 +74,8 @@ describe('Service: tableStorage', function () {
       table.setItem('false', false);
       expect(table.getItem('false')).toBe(false);
 
-      table.setItem('undefined', undefined);
-      expect(table.getItem('undefined')).toBe(undefined);
+      // table.setItem('undefined', undefined);
+      // expect(table.getItem('undefined')).toBe(undefined);
     });
 
     it('should store objects', function() {
@@ -94,6 +94,49 @@ describe('Service: tableStorage', function () {
 
       table.setItem('array', [1,2]);
       expect(table.getItem('array')).toEqual([1,2]);
+    });
+
+  });
+
+
+  describe('test different value types in array storage mode', function () {
+    var users, primitives;
+
+    beforeEach(function () {
+      users = storage('users');
+      primitives = storage('primitives');
+    });
+
+    it('should store items without itemName as an array', function () {
+      users.setItem({name: 'John', email: 'john@gmail.com'});
+      users.setItem({name: 'Peter', email: 'peter@gmail.com'});
+      users.setItem({name: 'Oliver', email: 'zmetser@gmail.com'});
+
+      for ( var i = 0; i < 10; i++) {
+        primitives.setItem('asd');
+      }
+
+      expect(users.$$table.length).toBe(3);
+      expect(primitives.$$table.length).toBe(10);
+    });
+
+    it('should retrive item from array storage by index', function () {
+      expect(users.getItem(1)).toEqual({name: 'Peter', email: 'peter@gmail.com'});
+
+      expect(users.getItem(10)).toBe(null);
+
+      expect(primitives.getItem(9)).toBe('asd');
+    });
+
+    it('should remove item from array storage', function () {
+      users.removeItem(1);
+      expect(users.$$table.length).toBe(2);
+
+      users.removeItem({name: 'John', email: 'john@gmail.com'});
+      expect(users.$$table.length).toBe(1);
+
+      primitives.removeItem(9);
+      expect(primitives.getItem(9)).toBe(null);
     });
 
   });

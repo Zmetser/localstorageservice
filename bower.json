@@ -1,5 +1,6 @@
 {
   "name": "localStorageService",
+  "main": "./src/storageprovider.js",
   "version": "0.2.0",
   "dependencies": {
     "angular": "~1.2.1"

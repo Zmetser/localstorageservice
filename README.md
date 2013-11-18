@@ -6,7 +6,13 @@ An [angular.js] module that gives you a table based [localStorage] API.
 
 ## Dependencies
 
-Only requires [angular.js] ~1.0.5
+Only requires [angular.js] ~1.2.1
+
+## Installation
+
+Package available from [bower]:
+
+`bower install angular-localStorageService --save`
 
 
 ## Usage
